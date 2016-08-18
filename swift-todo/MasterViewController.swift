@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import SKYKit
 
 class MasterViewController: UITableViewController {
+    
+    let privateDB = SKYContainer.defaultContainer().privateCloudDatabase
 
     var detailViewController: DetailViewController? = nil
     var objects = [AnyObject]()
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +27,8 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
+        
+        updateData()
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -42,15 +46,42 @@ class MasterViewController: UITableViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
         alertController.addAction(UIAlertAction(title: "Confirm", style: .Default, handler: { (action) in
             let title = alertController.textFields![0].text
+            let todo = SKYRecord(recordType: "todo")
+            todo.setObject(title!, forKey: "title")
+            todo.setObject(SKYSequence(), forKey: "order")
+            todo.setObject(false, forKey: "done")
             
-            self.objects.insert(title!, atIndex: 0)
-            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-            self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            self.privateDB.saveRecord(todo, completion: { (record, error) in
+                if (error != nil) {
+                    print("error saving todo: \(error)")
+                    return
+                }
+                
+                self.objects.insert(todo, atIndex: 0)
+                let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+                self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            })
         }))
         alertController.addTextFieldWithConfigurationHandler { (textField) in
             textField.placeholder = "Title"
         }
         self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    func updateData() {
+        let query = SKYQuery(recordType: "todo", predicate: NSPredicate(format: "done == false"))
+        let sortDescriptor = NSSortDescriptor(key: "order", ascending: false)
+        query.sortDescriptors = [sortDescriptor]
+        
+        privateDB.performCachedQuery(query) { (results, cached, error) in
+            if (error != nil) {
+                print("error querying todos: \(error)")
+                return
+            }
+            
+            self.objects = results
+            self.tableView.reloadData()
+        }
     }
 
     // MARK: - Segues
@@ -58,9 +89,9 @@ class MasterViewController: UITableViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
-                let object = objects[indexPath.row] as! String
+                let object = objects[indexPath.row] as! SKYRecord
                 let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
+                controller.detailItem = object.objectForKey("title")
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
@@ -80,8 +111,8 @@ class MasterViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
 
-        let object = objects[indexPath.row] as! String
-        cell.textLabel!.text = object
+        let object = objects[indexPath.row] as! SKYRecord
+        cell.textLabel!.text = object.objectForKey("title") as? String
         return cell
     }
 
