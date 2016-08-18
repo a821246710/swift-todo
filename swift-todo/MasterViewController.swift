@@ -9,6 +9,8 @@
 import UIKit
 import SKYKit
 
+public let ReceivedNotificationFromSkygaer = "ReceivedNotificationFromSkygear"
+
 class MasterViewController: UITableViewController {
     
     let privateDB = SKYContainer.defaultContainer().privateCloudDatabase
@@ -28,12 +30,16 @@ class MasterViewController: UITableViewController {
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
-        updateData()
+        NSNotificationCenter.defaultCenter().addObserverForName(ReceivedNotificationFromSkygaer, object: nil, queue: NSOperationQueue.mainQueue()) { (notification) in
+            self.updateData()
+        }
     }
 
     override func viewWillAppear(animated: Bool) {
         self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
         super.viewWillAppear(animated)
+        
+        updateData()
     }
 
     override func didReceiveMemoryWarning() {

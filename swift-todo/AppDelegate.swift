@@ -10,7 +10,7 @@ import UIKit
 import SKYKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate, SKYContainerDelegate {
     
     var loggedin = false
     var window: UIWindow?
@@ -24,6 +24,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         
         SKYContainer.defaultContainer().configAddress("https://your-endpoint.skygeario.com/") //Your server endpoint
         SKYContainer.defaultContainer().configureWithAPIKey("SKYGEAR_API_KEY") //Your Skygear API Key
+        SKYContainer.defaultContainer().delegate = self
+        
+        registerDevice()
+        
+        // This will prompt the user for permission to send remote notification
+        application.registerUserNotificationSettings(UIUserNotificationSettings())
+        application.registerForRemoteNotifications()
+        
         return true
     }
     
@@ -49,6 +57,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        print("Registered for Push notifications with token: \(deviceToken)");
+        SKYContainer.defaultContainer().registerRemoteNotificationDeviceToken(deviceToken) { (deviceID, error) in
+            if error != nil {
+                print("Failed to register device token: \(error)")
+                return
+            }
+            
+            self.addSubscription(deviceID)
+        }
+    }
+    
     // MARK: - Split view
     
     func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
@@ -59,6 +79,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             return true
         }
         return false
+    }
+    
+    // MARK: - Skygear
+    
+    func registerDevice() {
+        SKYContainer.defaultContainer().registerDeviceCompletionHandler { (deviceID, error) in
+            if error != nil {
+                print("Failed to register device: \(error)")
+                return
+            }
+            
+            self.addSubscription(deviceID)
+        }
+    }
+    
+    func addSubscription(deviceID: String) {
+        let query = SKYQuery(recordType: "todo", predicate: nil)
+        let subscription = SKYSubscription(query: query, subscriptionID: "my todos")
+        
+        let operation = SKYModifySubscriptionsOperation(subscriptionsToSave: [subscription])
+        operation.deviceID = deviceID
+        operation.modifySubscriptionsCompletionBlock = { (savedSubscriptions, operationError) in
+            dispatch_async(dispatch_get_main_queue()) {
+                if operationError != nil {
+                    print(operationError)
+                }
+            }
+        };
+        SKYContainer.defaultContainer().privateCloudDatabase.executeOperation(operation)
+    }
+    
+    func container(container: SKYContainer!, didReceiveNotification notification: SKYNotification!) {
+        print("received notification = \(notification)");
+        NSNotificationCenter.defaultCenter().postNotificationName(ReceivedNotificationFromSkygaer, object: notification)
     }
     
 }
