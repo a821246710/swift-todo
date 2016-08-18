@@ -10,6 +10,19 @@
 	<string>46</string>
 	<key>objects</key>
 	<dict>
+		<key>1C3D7E1CC3072089B22F0CB4</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.framework</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>Pods_swift_todo.framework</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
 		<key>362A000D34EEDBE6C591FAEC</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -55,24 +68,11 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>37EDAA028C8B0F346ADAA2A8</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>archive.ar</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>libPods-swift-todo.a</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
 		<key>3A41CAF5C6156700A92FB09B</key>
 		<dict>
 			<key>children</key>
 			<array>
-				<string>37EDAA028C8B0F346ADAA2A8</string>
+				<string>1C3D7E1CC3072089B22F0CB4</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -215,6 +215,7 @@ fi
 				<string>94879E8B1D64367000885F98</string>
 				<string>94DDEFD51D65ACC3009D8879</string>
 				<string>94DDEFD61D65ACC3009D8879</string>
+				<string>94DDEFD91D65AFEE009D8879</string>
 				<string>94DDEFD71D65ACC3009D8879</string>
 			</array>
 			<key>isa</key>
@@ -228,7 +229,7 @@ fi
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>EC282D0A729C63657AC6B6CB</string>
+				<string>D35AB43B707412D0162BCB33</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -310,6 +311,7 @@ fi
 			<array>
 				<string>94879E8A1D64367000885F98</string>
 				<string>94DDEFD21D65ACC3009D8879</string>
+				<string>94DDEFD81D65AFEE009D8879</string>
 				<string>94DDEFD31D65ACC3009D8879</string>
 				<string>94DDEFD41D65ACC3009D8879</string>
 				<string>94879E8E1D64367000885F98</string>
@@ -718,6 +720,26 @@ fi
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>94DDEFD81D65AFEE009D8879</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>LoginViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>94DDEFD91D65AFEE009D8879</key>
+		<dict>
+			<key>fileRef</key>
+			<string>94DDEFD81D65AFEE009D8879</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>9FFAEB6D41841A39D7E50F7E</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -747,10 +769,10 @@ fi
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>EC282D0A729C63657AC6B6CB</key>
+		<key>D35AB43B707412D0162BCB33</key>
 		<dict>
 			<key>fileRef</key>
-			<string>37EDAA028C8B0F346ADAA2A8</string>
+			<string>1C3D7E1CC3072089B22F0CB4</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>

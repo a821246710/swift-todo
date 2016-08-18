@@ -1,18 +1,19 @@
 //
 //  AppDelegate.swift
-//  test
+//  swift-todo
 //
 //  Created by Joey on 8/18/16.
 //  Copyright © 2016 Oursky Ltd. All rights reserved.
 //
 
 import UIKit
+import SKYKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
     
+    var loggedin = false
     var window: UIWindow?
-    
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
@@ -20,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
         navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
         splitViewController.delegate = self
+        
+        SKYContainer.defaultContainer().configAddress("https://your-endpoint.skygeario.com/") //Your server endpoint
+        SKYContainer.defaultContainer().configureWithAPIKey("SKYGEAR_API_KEY") //Your Skygear API Key
         return true
     }
     

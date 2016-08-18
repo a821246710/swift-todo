@@ -1,6 +1,6 @@
 //
 //  DetailViewController.swift
-//  test
+//  swift-todo
 //
 //  Created by Joey on 8/18/16.
 //  Copyright © 2016 Oursky Ltd. All rights reserved.
