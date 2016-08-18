@@ -8,20 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		94879E8B1D64367000885F98 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94879E8A1D64367000885F98 /* AppDelegate.swift */; };
-		94879E8D1D64367000885F98 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94879E8C1D64367000885F98 /* ViewController.swift */; };
 		94879E901D64367000885F98 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 94879E8E1D64367000885F98 /* Main.storyboard */; };
 		94879E921D64367000885F98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94879E911D64367000885F98 /* Assets.xcassets */; };
 		94879E951D64367000885F98 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 94879E931D64367000885F98 /* LaunchScreen.storyboard */; };
+		94DDEFD51D65ACC3009D8879 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DDEFD21D65ACC3009D8879 /* SplitViewController.swift */; };
+		94DDEFD61D65ACC3009D8879 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DDEFD31D65ACC3009D8879 /* MasterViewController.swift */; };
+		94DDEFD71D65ACC3009D8879 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94DDEFD41D65ACC3009D8879 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		94879E871D64367000885F98 /* swift-todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swift-todo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94879E8A1D64367000885F98 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		94879E8C1D64367000885F98 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		94879E8F1D64367000885F98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		94879E911D64367000885F98 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		94879E941D64367000885F98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		94879E961D64367000885F98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		94DDEFD21D65ACC3009D8879 /* SplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		94DDEFD31D65ACC3009D8879 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
+		94DDEFD41D65ACC3009D8879 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +59,9 @@
 			isa = PBXGroup;
 			children = (
 				94879E8A1D64367000885F98 /* AppDelegate.swift */,
-				94879E8C1D64367000885F98 /* ViewController.swift */,
+				94DDEFD21D65ACC3009D8879 /* SplitViewController.swift */,
+				94DDEFD31D65ACC3009D8879 /* MasterViewController.swift */,
+				94DDEFD41D65ACC3009D8879 /* DetailViewController.swift */,
 				94879E8E1D64367000885F98 /* Main.storyboard */,
 				94879E911D64367000885F98 /* Assets.xcassets */,
 				94879E931D64367000885F98 /* LaunchScreen.storyboard */,
@@ -135,8 +141,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94879E8D1D64367000885F98 /* ViewController.swift in Sources */,
 				94879E8B1D64367000885F98 /* AppDelegate.swift in Sources */,
+				94DDEFD51D65ACC3009D8879 /* SplitViewController.swift in Sources */,
+				94DDEFD61D65ACC3009D8879 /* MasterViewController.swift in Sources */,
+				94DDEFD71D65ACC3009D8879 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +261,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.skygear.swift-todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -264,6 +273,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.skygear.swift-todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -286,6 +296,7 @@
 				94879E9B1D64367000885F98 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
