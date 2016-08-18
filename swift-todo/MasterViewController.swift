@@ -72,7 +72,7 @@ class MasterViewController: UITableViewController {
         let query = SKYQuery(recordType: "todo", predicate: NSPredicate(format: "done == false"))
         let sortDescriptor = NSSortDescriptor(key: "order", ascending: false)
         query.sortDescriptors = [sortDescriptor]
-        
+      
         privateDB.performCachedQuery(query) { (results, cached, error) in
             if (error != nil) {
                 print("error querying todos: \(error)")
@@ -123,8 +123,16 @@ class MasterViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            objects.removeAtIndex(indexPath.row)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            let todo = objects.removeAtIndex(indexPath.row) as! SKYRecord
+            todo.setObject(true, forKey: "done")
+            self.privateDB.saveRecord(todo, completion: { (record, error) in
+                if (error != nil) {
+                    print("error saving todo: \(error)")
+                    return
+                }
+                
+                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            })
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
