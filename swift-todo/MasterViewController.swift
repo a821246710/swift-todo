@@ -97,7 +97,7 @@ class MasterViewController: UITableViewController {
             if let indexPath = self.tableView.indexPathForSelectedRow {
                 let object = objects[indexPath.row] as! SKYRecord
                 let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object.objectForKey("title")
+                controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
@@ -129,7 +129,7 @@ class MasterViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            let todo = objects.removeAtIndex(indexPath.row) as! SKYRecord
+            let todo = objects[indexPath.row] as! SKYRecord
             todo.setObject(true, forKey: "done")
             self.privateDB.saveRecord(todo, completion: { (record, error) in
                 if (error != nil) {
@@ -137,6 +137,7 @@ class MasterViewController: UITableViewController {
                     return
                 }
                 
+                self.objects.removeAtIndex(indexPath.row) as! SKYRecord
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
             })
         } else if editingStyle == .Insert {

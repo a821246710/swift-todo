@@ -49,7 +49,13 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
+                    <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM">
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="QFn-pU-iDD">
+                            <connections>
+                                <action selector="edit:" destination="JEX-9P-axG" id="Msc-mw-uLL"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="detailDescriptionLabel" destination="0XM-y9-sOw" id="deQ-Na-JPF"/>
                     </connections>
