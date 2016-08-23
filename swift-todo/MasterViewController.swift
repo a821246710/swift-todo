@@ -9,11 +9,9 @@
 import UIKit
 import SKYKit
 
-public let ReceivedNotificationFromSkygaer = "ReceivedNotificationFromSkygear"
-
 class MasterViewController: UITableViewController {
     
-    let privateDB = SKYContainer.defaultContainer().privateCloudDatabase
+    var recordStorage:SKYRecordStorage!
 
     var detailViewController: DetailViewController? = nil
     var objects = [AnyObject]()
@@ -30,8 +28,20 @@ class MasterViewController: UITableViewController {
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
-        NSNotificationCenter.defaultCenter().addObserverForName(ReceivedNotificationFromSkygaer, object: nil, queue: NSOperationQueue.mainQueue()) { (notification) in
-            self.updateData()
+        
+        let query = SKYQuery(recordType: "todo", predicate: nil)
+        let coordinator = SKYRecordStorageCoordinator.defaultCoordinator()
+        do {
+            recordStorage = try coordinator.recordStorageWithDatabase(SKYContainer.defaultContainer().privateCloudDatabase, query: query, options: nil, error: ())
+            recordStorage.enabled = true
+        } catch {
+            print("error occurs")
+        }
+        
+        NSNotificationCenter.defaultCenter().addObserverForName(SKYRecordStorageDidUpdateNotification,
+                                                                object: recordStorage,
+                                                                queue: NSOperationQueue.mainQueue()) { (note) in
+                                                                    self.updateData()
         }
     }
 
@@ -52,42 +62,22 @@ class MasterViewController: UITableViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
         alertController.addAction(UIAlertAction(title: "Confirm", style: .Default, handler: { (action) in
             let title = alertController.textFields![0].text
+            
             let todo = SKYRecord(recordType: "todo")
             todo.setObject(title!, forKey: "title")
+            // FIXME: use SKYSequence
             todo.setObject(SKYSequence(), forKey: "order")
             todo.setObject(false, forKey: "done")
             
-            self.privateDB.saveRecord(todo, completion: { (record, error) in
-                if (error != nil) {
-                    print("error saving todo: \(error)")
-                    return
-                }
-                
-                self.objects.insert(todo, atIndex: 0)
-                let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-                self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-            })
+            self.recordStorage.saveRecord(todo)
+            self.objects.insert(todo, atIndex: 0)
+            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+            self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
         }))
         alertController.addTextFieldWithConfigurationHandler { (textField) in
             textField.placeholder = "Title"
         }
         self.presentViewController(alertController, animated: true, completion: nil)
-    }
-    
-    func updateData() {
-        let query = SKYQuery(recordType: "todo", predicate: NSPredicate(format: "done == false"))
-        let sortDescriptor = NSSortDescriptor(key: "order", ascending: false)
-        query.sortDescriptors = [sortDescriptor]
-      
-        privateDB.performCachedQuery(query) { (results, cached, error) in
-            if (error != nil) {
-                print("error querying todos: \(error)")
-                return
-            }
-            
-            self.objects = results
-            self.tableView.reloadData()
-        }
     }
 
     // MARK: - Segues
@@ -105,6 +95,13 @@ class MasterViewController: UITableViewController {
     }
 
     // MARK: - Table View
+    
+    func updateData() {
+        self.objects = self.recordStorage.recordsWithType("todo",
+                                                          predicate: NSPredicate(format: "done == false"),
+                                                          sortDescriptors: [NSSortDescriptor(key: "order", ascending: false)])
+        self.tableView.reloadData()
+    }
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -131,15 +128,9 @@ class MasterViewController: UITableViewController {
         if editingStyle == .Delete {
             let todo = objects[indexPath.row] as! SKYRecord
             todo.setObject(true, forKey: "done")
-            self.privateDB.saveRecord(todo, completion: { (record, error) in
-                if (error != nil) {
-                    print("error saving todo: \(error)")
-                    return
-                }
-                
-                self.objects.removeAtIndex(indexPath.row) as! SKYRecord
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-            })
+            recordStorage.saveRecord(todo)
+            self.objects.removeAtIndex(indexPath.row) as! SKYRecord
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
         } else if editingStyle == .Insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }

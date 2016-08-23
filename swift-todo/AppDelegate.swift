@@ -17,13 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        let splitViewController = self.window!.rootViewController as! UISplitViewController
-        let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
-        splitViewController.delegate = self
         
+        // setup Skygear environment
         SKYContainer.defaultContainer().configAddress("https://your-endpoint.skygeario.com/") //Your server endpoint
         SKYContainer.defaultContainer().configureWithAPIKey("SKYGEAR_API_KEY") //Your Skygear API Key
+        
         SKYContainer.defaultContainer().delegate = self
         
         registerDevice()
@@ -65,11 +63,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 return
             }
             
+            // FIXME: delete this, because use qeury to build record storage will auto subscribe
             self.addSubscription(deviceID)
         }
     }
     
     // MARK: - Split view
+    
+    func setupSplitView(splitViewController: UISplitViewController) {
+        let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
+        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
+        splitViewController.delegate = self
+    }
     
     func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
         guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
@@ -83,6 +88,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     // MARK: - Skygear
     
+    func didLoggedin() {
+        loggedin = true
+        registerDevice()
+    }
+    
     func registerDevice() {
         SKYContainer.defaultContainer().registerDeviceCompletionHandler { (deviceID, error) in
             if error != nil {
@@ -90,10 +100,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 return
             }
             
+            // FIXME: delete this, because use qeury to build record storage will auto subscribe
             self.addSubscription(deviceID)
         }
     }
     
+    // FIXME: delete this, because use qeury to build record storage will auto subscribe
     func addSubscription(deviceID: String) {
         let query = SKYQuery(recordType: "todo", predicate: nil)
         let subscription = SKYSubscription(query: query, subscriptionID: "my todos")
@@ -112,7 +124,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     func container(container: SKYContainer!, didReceiveNotification notification: SKYNotification!) {
         print("received notification = \(notification)");
-        NSNotificationCenter.defaultCenter().postNotificationName(ReceivedNotificationFromSkygaer, object: notification)
+        
+        SKYRecordStorageCoordinator.defaultCoordinator().handleUpdateWithRemoteNotification(notification)
     }
     
 }

@@ -39,9 +39,8 @@ class LoginViewController: UIViewController {
             signupButton.enabled = false
             logoutButton.enabled = true
             let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-            appDelegate.loggedin = true
-            appDelegate.registerDevice()
-            self.dismissViewControllerAnimated(true, completion: nil)
+            appDelegate.didLoggedin()
+            self.performSegueWithIdentifier("loggedin", sender: nil)
         } else {
             loginStatusLabel.text = "Not logged in"
             loginButton.enabled = true
