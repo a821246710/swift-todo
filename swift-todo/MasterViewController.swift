@@ -28,6 +28,8 @@ class MasterViewController: UITableViewController {
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl!.addTarget(self, action: #selector(refresh(_:)), forControlEvents: UIControlEvents.ValueChanged)
         
         let query = SKYQuery(recordType: "todo", predicate: nil)
         let coordinator = SKYRecordStorageCoordinator.defaultCoordinator()
@@ -66,7 +68,7 @@ class MasterViewController: UITableViewController {
             let todo = SKYRecord(recordType: "todo")
             todo.setObject(title!, forKey: "title")
             // FIXME: use SKYSequence
-            todo.setObject(SKYSequence(), forKey: "order")
+            //todo.setObject(SKYSequence(), forKey: "order")
             todo.setObject(false, forKey: "done")
             
             self.recordStorage.saveRecord(todo)
@@ -94,7 +96,15 @@ class MasterViewController: UITableViewController {
         }
     }
 
-    // MARK: - Table View
+    // MARK: - Table View Source
+    
+    func refresh (sender: AnyObject) {
+        // Manually trigger an update
+        recordStorage.performUpdateWithCompletionHandler { (finished, error) in
+            self.updateData()
+            self.refreshControl?.endRefreshing()
+        }
+    }
     
     func updateData() {
         self.objects = self.recordStorage.recordsWithType("todo",
@@ -102,6 +112,8 @@ class MasterViewController: UITableViewController {
                                                           sortDescriptors: [NSSortDescriptor(key: "order", ascending: false)])
         self.tableView.reloadData()
     }
+    
+    // MARK: - Table View
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
