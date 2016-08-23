@@ -124,18 +124,37 @@ class MasterViewController: UITableViewController {
         return true
     }
 
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            let todo = objects[indexPath.row] as! SKYRecord
+    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        let editAction = UITableViewRowAction(style: UITableViewRowActionStyle.Normal , title: "Edit") { (action, indexPath) in
+            
+            let alertController = UIAlertController(title: "Edit title", message: nil, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "Confirm", style: .Default, handler: { (action) in
+                let title = alertController.textFields![0].text
+                let todo = self.objects[indexPath.row] as! SKYRecord
+                todo.setObject(title!, forKey: "title")
+                self.recordStorage.saveRecord(todo)
+                tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            }))
+            alertController.addTextFieldWithConfigurationHandler { (textField) in
+                let todo = self.objects[indexPath.row] as! SKYRecord
+                textField.placeholder = "Title"
+                textField.text = todo.objectForKey("title") as? String
+            }
+            self.presentViewController(alertController, animated: true, completion: nil)
+        }
+        
+        let deleteAction = UITableViewRowAction(style: UITableViewRowActionStyle.Default, title: "Delete", handler: { (action, indexPath) in
+            
+            let todo = self.objects[indexPath.row] as! SKYRecord
             todo.setObject(true, forKey: "done")
-            recordStorage.saveRecord(todo)
+            self.recordStorage.saveRecord(todo)
             self.objects.removeAtIndex(indexPath.row) as! SKYRecord
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-        }
+        })
+        
+        return [deleteAction,editAction]
     }
-
 
 }
 
